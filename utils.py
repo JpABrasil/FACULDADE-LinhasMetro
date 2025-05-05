@@ -93,62 +93,63 @@ def ordem(matriz: np.array) -> bool:
         return True
     return False
 
-def maximais_minimais(matriz: np.array) -> typing.Tuple[typing.List[int], typing.List[int]]:
-    '''
-    Encontramos os elementos maximais e minimais em uma relação representada por uma matriz.
-    Elementos maximais: aqueles que não têm nenhum outro maior.
-    Elementos minimais: aqueles que não têm nenhum outro menor.
-    
-    Args:
-        matriz: Numpy.Array([]) - Matriz binária representando a relação.
-        
-    Returns:
-        maximais: Lista de índices dos elementos maximais.
-        minimais: Lista de índices dos elementos minimais.
-    '''
-    n = matriz.shape[0]  # Dimensão da matriz
+def maximais_minimais(matriz: np.array):
+    n = matriz.shape[0]
     maximais = []
     minimais = []
-    
+
     for i in range(n):
-        # Elemento maximal: não existe nenhum outro elemento maior (não há 1 na linha do elemento para outro elemento)
-        if np.all(matriz[i, :] == 0) and np.all(matriz[:, i] == 0):
+        # Verifica se a linha i é toda 0 (exceto diagonal)
+        if all(matriz[i][j] == 0 for j in range(n) if j != i):
             maximais.append(i)
-        
-        # Elemento minimal: não existe nenhum outro elemento menor (não há 1 na coluna do elemento para outro elemento)
-        if np.all(matriz[:, i] == 0) and np.all(matriz[i, :] == 0):
+
+        # Verifica se a coluna i é toda 0 (exceto diagonal)
+        # e se matriz[i][i] == 1 (tem laço reflexivo)
+        if matriz[i][i] == 1 and all(matriz[j][i] == 0 for j in range(n) if j != i):
             minimais.append(i)
-    
+
     return maximais, minimais
 
 
-def maior_menor_elemento(matriz: np.array) -> typing.Tuple[int, int]:
-    '''
-    Encontramos o maior e o menor elemento em uma relação representada por uma matriz.
-    O maior elemento é aquele que é maior ou igual a todos os outros.
-    O menor elemento é aquele que é menor ou igual a todos os outros.
-    
-    Args:
-        matriz: Numpy.Array([]) - Matriz binária representando a relação.
-        
-    Returns:
-        maior: Índice do maior elemento, se existir.
-        menor: Índice do menor elemento, se existir.
-    '''
-    n = matriz.shape[0]  # Dimensão da matriz
+
+def maior_menor_elemento(matriz: np.array):
+    n = matriz.shape[0]
     maior = None
     menor = None
-    
-    # O maior elemento é aquele que não tem nenhum elemento maior que ele (em todas as linhas e colunas)
+
     for i in range(n):
-        if np.all(matriz[i, :] == 1) and np.all(matriz[:, i] == 1):
+        # Verifica se linha i é toda 1 (com exceção de matriz[i][i])
+        if all(matriz[i][j] == 1 or j == i for j in range(n)):
             maior = i
-            break
-    
-    # O menor elemento é aquele que não tem nenhum elemento menor que ele (em todas as linhas e colunas)
-    for i in range(n):
-        if np.all(matriz[i, :] == 0) and np.all(matriz[:, i] == 0):
+
+        # Verifica se coluna i é toda 1 (com exceção de matriz[i][i])
+        if all(matriz[j][i] == 1 or j == i for j in range(n)):
             menor = i
-            break
-    
+
     return maior, menor
+
+def composicao_relacoes(metro: np.array, onibus: np.array) -> np.array:
+    '''
+    Faz a composição entre a matriz do metrô e do ônibus,
+    sair de uma estacao de metro, pegar um onibus e chegar em outra estacao.
+
+
+    A composição representa: se existe i -> j no metrô e j -> k no ônibus,
+    então existe i → k na composição.
+
+    Args:
+        metro: Numpy.Array([]) representando a matriz de adjacência do metrô
+        onibus: Numpy.Array([]) representando a matriz de adjacência do ônibus
+
+    Returns:
+        matriz_resultante: Numpy.Array([]) com a composição (metrô seguido de ônibus)
+    '''
+    n = metro.shape[0]
+    matriz_resultante = np.zeros((n, n), dtype=int)
+    for i in range(n):
+        for j in range(n):
+            for k in range(n):
+                if metro[i][k] == 1 and onibus[k][j] == 1:
+                    matriz_resultante[i][j] = 1
+    return matriz_resultante
+
