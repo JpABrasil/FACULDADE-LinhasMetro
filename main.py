@@ -50,13 +50,11 @@ print(f"Ordem: {ordem_result}")
 
 # Testar a função de máximos e mínimos
 maximais, minimais = maximais_minimais(matriz_adjacencia)
-print(f"Maximais: {maximais}")
-print(f"Minimais: {minimais}")
+
 
 # Testar a função maior e menor elemento
 maior, menor = maior_menor_elemento(matriz_adjacencia)
-print(f"Maior elemento: {maior}")
-print(f"Menor elemento: {menor}")
+
 
 matriz_onibus = np.array([
     [0, 1, 0, 0, 0, 1],
@@ -66,7 +64,7 @@ matriz_onibus = np.array([
     [0, 0, 0, 0, 0, 1],
     [1, 0, 0, 1, 1, 0],
 ])
-# Testar a composição das relações (Metrô → Ônibus)
+# Testar a composição das relações (Metrô -> Ônibus)
 composicao = composicao_relacoes(matriz_adjacencia, matriz_onibus)
 print("Composição Metrô -> Ônibus:")
 print(composicao)

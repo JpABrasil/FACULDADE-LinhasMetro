@@ -32,7 +32,7 @@ def simetrica(matriz: np.array) -> typing.Tuple[bool, typing.Optional[np.array]]
 
 def assimetrica(matriz: np.array) -> typing.Tuple[bool, None]:
     '''
-    Verificamos para todo par de estações (i,j) se existe uma conexão de i para j, 
+    Verificamos para todo par de estações (i,j) se existe uma conexão de i para j,
     então não deve poder existir uma conexão de j para i.
     Fazemos isso verificando se o produto da matriz e sua transposta tem todos os elementos iguais a 0 e se a diagonal é igual a 0
     Args:
@@ -45,8 +45,8 @@ def assimetrica(matriz: np.array) -> typing.Tuple[bool, None]:
 def antissimetrica(matriz: np.array) -> typing.Tuple[bool, None]:
     '''
     Isolamos a diagonal da matriz e comparamos em quais pares de posições na matriz original
-    e na matriz transposta temos elementos iguais 1. 
-    Se houver algum caso em que (a,b) e 
+    e na matriz transposta temos elementos iguais 1.
+    Se houver algum caso em que (a,b) e
     (b,a) existem nas duas matrizes (original e transposta) retornamos falso
     Args:
         matriz: Numpy.Array([])
@@ -93,63 +93,55 @@ def ordem(matriz: np.array) -> bool:
         return True
     return False
 
-def maximais_minimais(matriz: np.array):
-    n = matriz.shape[0]
+
+def maximais_minimais(matriz):
     maximais = []
     minimais = []
 
-    for i in range(n):
-        # Verifica se a linha i é toda 0 (exceto diagonal)
-        if all(matriz[i][j] == 0 for j in range(n) if j != i):
-            maximais.append(i)
-
-        # Verifica se a coluna i é toda 0 (exceto diagonal)
-        # e se matriz[i][i] == 1 (tem laço reflexivo)
-        if matriz[i][i] == 1 and all(matriz[j][i] == 0 for j in range(n) if j != i):
-            minimais.append(i)
+    if reflexiva(matriz)[0] and transitiva(matriz)[0] and antissimetrica(matriz)[0]:
+        for i in range(len(matriz)):
+            # Verifica se a linha i é zero (exceto a diagonal)
+            if all(matriz[i][j] == 0 for j in range(len(matriz[0])) if j != i):
+                maximais.append(i)
+            # Verifica se a coluna i é zero (exceto a diagonal)
+            if all(matriz[j][i] == 0 for j in range(len(matriz)) if j != i):
+                minimais.append(i)
+        print("Elementos maximal:", maximais)
+        print("Elementos minimal:", minimais)
+    else:
+        print("A matriz não atende os requisitos de maximais e minimais.")
 
     return maximais, minimais
 
 
+def maior_menor_elemento(matriz):
+    linhas_maior_elemento = []
+    linhas_menor_elemento = []
 
-def maior_menor_elemento(matriz: np.array):
-    n = matriz.shape[0]
-    maior = None
-    menor = None
+    for i in range(len(matriz)):
+        if all(matriz[i]) and np.count_nonzero(matriz[i] == 1) == len(matriz[i]):
+            linhas_maior_elemento.append(i)
+        elif np.count_nonzero(matriz[i] == 1) == 1:
+            linhas_menor_elemento.append(i)
 
-    for i in range(n):
-        # Verifica se linha i é toda 1 (com exceção de matriz[i][i])
-        if all(matriz[i][j] == 1 or j == i for j in range(n)):
-            maior = i
+    print("Maior: ", linhas_menor_elemento)
+    print("Menor: ", linhas_maior_elemento)
 
-        # Verifica se coluna i é toda 1 (com exceção de matriz[i][i])
-        if all(matriz[j][i] == 1 or j == i for j in range(n)):
-            menor = i
-
-    return maior, menor
-
-def composicao_relacoes(metro: np.array, onibus: np.array) -> np.array:
-    '''
-    Faz a composição entre a matriz do metrô e do ônibus,
-    sair de uma estacao de metro, pegar um onibus e chegar em outra estacao.
+    return linhas_menor_elemento, linhas_maior_elemento
 
 
-    A composição representa: se existe i -> j no metrô e j -> k no ônibus,
-    então existe i → k na composição.
 
-    Args:
-        metro: Numpy.Array([]) representando a matriz de adjacência do metrô
-        onibus: Numpy.Array([]) representando a matriz de adjacência do ônibus
 
-    Returns:
-        matriz_resultante: Numpy.Array([]) com a composição (metrô seguido de ônibus)
-    '''
-    n = metro.shape[0]
-    matriz_resultante = np.zeros((n, n), dtype=int)
-    for i in range(n):
-        for j in range(n):
-            for k in range(n):
-                if metro[i][k] == 1 and onibus[k][j] == 1:
-                    matriz_resultante[i][j] = 1
-    return matriz_resultante
+def composicao_relacoes(metro, onibus):
+    composicao = []
 
+    for i in range(len(metro)):
+        linha_composta = []
+        for j in range(len(metro[0])):
+            if metro[i][j] == 1 or onibus[i][j] == 1:
+                linha_composta.append(1)
+            else:
+                linha_composta.append(0)
+        composicao.append(linha_composta)
+
+    return composicao
